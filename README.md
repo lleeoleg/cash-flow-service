@@ -19,8 +19,8 @@
 
 ### 📦 Установка зависимостей
 
-git clone https://github.com/lleeoleg/cashflow-manager.git
-cd cashflow-manager
+git clone https://github.com/lleeoleg/cash-flow-service.git
+cd cash-flow-service
 python -m venv venv
 source venv/bin/activate  # или venv\Scripts\activate для Windows
 pip install -r requirements.txt
