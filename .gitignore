@@ -1,0 +1,31 @@
+# Python bytecode and compiled files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+*.egg-info/
+.Python
+
+# IDE-specific files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs and databases
+*.log
+db.sqlite3
+
+# Temporary files
+tmp/
+*.swp
