@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Создание и редактирование записи</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="text-danger small">{{ field.errors|striptags }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function loadCategories(typeId, selectedCategoryId = null, selectedSubcategoryId = null) {
+        if (!typeId) return;
+
+        $.ajax({
+            url: "{% url 'cashflow:ajax_load_categories' %}",
+            data: { 'type': typeId },
+            success: function (data) {
+                $("#id_category").empty().append('<option value="">---------</option>');
+                $("#id_subcategory").empty().append('<option value="">---------</option>');
+                $.each(data, function (index, category) {
+                    const selected = category.id == selectedCategoryId ? 'selected' : '';
+                    $("#id_category").append(`<option value="${category.id}" ${selected}>${category.name}</option>`);
+                });
+
+                if (selectedCategoryId) {
+                    loadSubcategories(selectedCategoryId, selectedSubcategoryId);
+                }
+            }
+        });
+    }
+
+    function loadSubcategories(categoryId, selectedSubcategoryId = null) {
+        if (!categoryId) return;
+
+        $.ajax({
+            url: "{% url 'cashflow:ajax_load_subcategories' %}",
+            data: { 'category': categoryId },
+            success: function (data) {
+                $("#id_subcategory").empty().append('<option value="">---------</option>');
+                $.each(data, function (index, subcategory) {
+                    const selected = subcategory.id == selectedSubcategoryId ? 'selected' : '';
+                    $("#id_subcategory").append(`<option value="${subcategory.id}" ${selected}>${subcategory.name}</option>`);
+                });
+            }
+        });
+    }
+
+    // Обработка изменений вручную
+    $("#id_type").change(function () {
+        const typeId = $(this).val();
+        loadCategories(typeId);
+    });
+
+    $("#id_category").change(function () {
+        const categoryId = $(this).val();
+        loadSubcategories(categoryId);
+    });
+
+    $(document).ready(function () {
+        const currentType = $("#id_type").val();
+        const currentCategory = "{{ form.data.category|default:'' }}";
+        const currentSubcategory = "{{ form.data.subcategory|default:'' }}";
+
+        if (currentType) {
+            loadCategories(currentType, currentCategory, currentSubcategory);
+        }
+    });
+</script>
+{% endblock %}

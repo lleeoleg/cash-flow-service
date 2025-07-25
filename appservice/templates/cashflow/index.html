@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Список записей{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Список записей</h1>
+
+<form method="get" class="row g-3 mb-4">
+  <div class="col-md-2">
+    <label for="start_date" class="form-label">С:</label>
+    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request.GET.start_date }}">
+  </div>
+  <div class="col-md-2">
+    <label for="end_date" class="form-label">По:</label>
+    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request.GET.end_date }}">
+  </div>
+  <div class="col-md-2">
+    <label for="status" class="form-label">Статус:</label>
+    <select name="status" id="status" class="form-select">
+      <option value="">Все</option>
+      {% for s in statuses %}
+      <option value="{{ s.id }}" {% if request.GET.status == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="type" class="form-label">Тип:</label>
+    <select name="type" id="type" class="form-select">
+      <option value="">Все</option>
+      {% for t in types %}
+      <option value="{{ t.id }}" {% if request.GET.type == t.id|stringformat:"s" %}selected{% endif %}>{{ t.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="category" class="form-label">Категория:</label>
+    <select name="category" id="category" class="form-select">
+      <option value="">Все</option>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="subcategory" class="form-label">Подкатегория:</label>
+    <select name="subcategory" id="subcategory" class="form-select">
+      <option value="">Все</option>
+      {% for sc in subcategories %}
+      <option value="{{ sc.id }}" {% if request.GET.subcategory == sc.id|stringformat:"s" %}selected{% endif %}>{{ sc.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-12">
+    <button type="submit" class="btn btn-primary">Фильтровать</button>
+    <a href="{% url 'cashflow:index' %}" class="btn btn-secondary">Сбросить</a>
+    <a href="{% url 'cashflow:create' %}" class="btn btn-success">Добавить запись</a>
+    <a href="{% url 'cashflow:manage_panel' %}" class="btn btn-success">Управления справочниками</a>
+  </div>
+</form>
+
+<table class="table table-bordered table-striped">
+  <thead class="table-dark">
+    <tr>
+      <th>Дата</th>
+      <th>Статус</th>
+      <th>Тип</th>
+      <th>Категория</th>
+      <th>Подкатегория</th>
+      <th>Сумма</th>
+      <th>Комментарий</th>
+      <th>Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in records %}
+    <tr>
+      <td>{{ r.date }}</td>
+      <td>{{ r.status.name }}</td>
+      <td>{{ r.type.name }}</td>
+      <td>{{ r.category.name }}</td>
+      <td>{{ r.subcategory.name }}</td>
+      <td>{{ r.amount }} руб.</td>
+      <td>{{ r.comment|default:"—" }}</td>
+      <td>
+        <a href="{% url 'cashflow:edit' r.id %}" class="btn btn-sm btn-warning">✏️</a>
+        <a href="{% url 'cashflow:delete' r.id %}" class="btn btn-sm btn-danger">🗑️</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="8" class="text-center text-muted">Нет записей</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

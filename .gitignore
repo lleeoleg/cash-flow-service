@@ -24,7 +24,6 @@ ehthumbs.db
 
 # Logs and databases
 *.log
-db.sqlite3
 
 # Temporary files
 tmp/
